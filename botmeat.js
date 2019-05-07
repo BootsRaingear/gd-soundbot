@@ -1,7 +1,7 @@
 var fs = require('fs');
 var Discord = require('discord.js');
 var opus = require('opusscript');
-const { prefix, token, soundpath, victorpath, mmmboppath, voicechannel } = require('./config.json');
+const { prefix, token, soundpath, victorpath, mmmboppath, themesongpath, kintropath, kreaderintropath, knamespath, kboardpath, kartistpath ,voicechannel } = require('./config.json');
 
 var bot = new Discord.Client();
 var isReady = true;
@@ -70,7 +70,7 @@ bot.on('message', message => {
 			console.log(soundfile);
 			fs.stat(soundfile, function(err,data) {
 				if (err != null) {
-					console.log('file: ' + sounfile + ' does not exist');
+					console.log('file: ' + soundfile + ' does not exist');
 				} else {
 					queueSound(soundfile);
 					if (isReady) {
@@ -78,6 +78,45 @@ bot.on('message', message => {
 					}
 				}
 			});
+		}
+		message.delete(100);
+	} else if (command === 'playkumquat') {
+		console.log("playing kumquat sound");
+		if (args.length > 0) {
+			soundfile = kboardpath + '/' + args[0];
+			console.log(soundfile);
+			fs.stat(soundfile, function(err,data) {
+				if (err != null) {
+					console.log('file: ' + soundfile + ' does not exist');
+				} else {
+					queueSound(soundfile);
+					if (isReady) {
+						playNextSound();						
+					}
+				}
+			});			
+		}
+		message.delete(100);		
+	} else if (command === 'playintro') {
+		if (args[0] > 0 && args.length > 3) {
+			console.log(args.length);
+			queueSound(kintropath + '/' + args[0] + '.ogg');
+			var introchoice = Math.floor(Math.random() * 3) + 1;
+			queueSound(kreaderintropath + '/' + introchoice + '.ogg');
+			console.log(kreaderintropath + '/' + introchoice + '.ogg');
+			queueSound(knamespath + '/' + args[1] + '.ogg');
+			console.log(knamespath + '/' + args[1] + '.ogg');
+			for (var i = 3; i < args.length; i++)
+			{
+				queueSound(knamespath + '/' + args[i] + '.ogg');
+			}
+			var aintrochoice = Math.floor(Math.random() * 3) + 1;
+			queueSound(kartistpath + '/' + aintrochoice + '.ogg');
+			queueSound(knamespath + '/' + args[2] + '.ogg');
+
+			if (isReady) { 
+				playNextSound();
+			}
 		}
 		message.delete(100);
 	}
@@ -109,7 +148,7 @@ var playSound = function(soundfile) {
 		var voiceChannel = bot.channels.get(voicechannel);
 		voiceChannel.join().then(connection =>
 		{
-			const streamOptions = { volume: 0.7};		
+			const streamOptions = { volume: 0.8};		
 			const dispatcher = connection.playFile(soundfile, streamOptions);
 			dispatcher.on("end", end => {
 				voiceChannel.leave();
