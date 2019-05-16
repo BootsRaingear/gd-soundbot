@@ -66,7 +66,7 @@ bot.on('message', message => {
 
 	} else if (command === 'playthemesong') {
 		if (args[0] > 0) {
-			soundfile = themesongpath + '/' + args[0] + '.ogg';
+			soundfile = themesongpath + '/' + args[0] + '.wav';
 			console.log(soundfile);
 			fs.stat(soundfile, function(err,data) {
 				if (err != null) {
@@ -98,7 +98,7 @@ bot.on('message', message => {
 		}
 		message.delete(100);		
 	} else if (command === 'playintro') {
-		if (args[0] > 0 && args.length > 3) {
+		if (args[0] > 0 && args.length >= 3) {
 			console.log(args.length);
 			queueSound(kintropath + '/' + args[0] + '.ogg');
 			var introchoice = Math.floor(Math.random() * 3) + 1;
@@ -148,7 +148,7 @@ var playSound = function(soundfile) {
 		var voiceChannel = bot.channels.get(voicechannel);
 		voiceChannel.join().then(connection =>
 		{
-			const streamOptions = { volume: 0.8};		
+			const streamOptions = { volume: 1};		
 			const dispatcher = connection.playFile(soundfile, streamOptions);
 			dispatcher.on("end", end => {
 				voiceChannel.leave();
